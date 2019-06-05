@@ -108,3 +108,6 @@ venv.bak/
 
 # lfw data too big and not important
 MNIST_data
+
+# data
+remmender/data
