@@ -18,7 +18,7 @@ def get_item_info(input_file):
 
     item_info = {}
     
-    fp = open(input_file)
+    fp = open(input_file,'r', encoding='UTF-8')
 
     linenum = 0
     for line in fp:
@@ -36,4 +36,10 @@ def get_item_info(input_file):
             title = ",".join(item[1:-1])
         item_info[itemId] = [title, genre]
     fp.close()
-    return item_info;
+    return item_info
+
+if __name__ == "__main__":
+    item_dict= get_item_info("D:\\WorkSpace\\python\\tensorflow_hello\\recommender\\data\\ml-latest-small\\movies.csv")
+    print(len(item_dict))
+    print(item_dict['1'])
+    print(item_dict['11'])
