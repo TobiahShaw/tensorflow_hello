@@ -1,7 +1,7 @@
 """
 author:TobiahShaw
 date:2019-06-24
-util function
+util function,listen to the course on imooc.com
 """
 import os
 
