@@ -5,9 +5,10 @@ lfm,listen to the course on imooc.com
 """
 
 import numpy as np
-import sys
-sys.path.append(r'..')
-from util import read
+import sys, os
+lib_path = os.path.abspath(os.path.join('.'))
+sys.path.append(lib_path)
+import util.read as read
 
 def lfm_train(train_data, f, alpha, beta, step):
     """
@@ -49,6 +50,9 @@ def model_predict(user_vector, item_vector):
 def model_train_process():
     train_data = read.get_train_data("D:\\WorkSpace\\python\\tensorflow_hello\\recommender\\data\\ml-latest-small\\ratings.csv")
     user_vec, item_vec = lfm_train(train_data, 50, 0.01, 0.1, 50)
+
+    print(user_vec["1"])
+    print(item_vec["24"])
 
 if __name__ == "__main__":
     model_train_process()
