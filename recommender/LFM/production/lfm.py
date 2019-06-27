@@ -6,7 +6,7 @@ lfm,listen to the course on imooc.com
 
 import numpy as np
 import sys, os
-lib_path = os.path.abspath(os.path.join('.'))
+lib_path = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(lib_path)
 import util.read as read
 
