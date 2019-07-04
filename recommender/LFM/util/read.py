@@ -118,15 +118,15 @@ def get_train_data(input_file):
     return train_data
 
 if __name__ == "__main__":
-    item_dict= get_item_info("D:\\WorkSpace\\python\\tensorflow_hello\\recommender\\data\\ml-latest-small\\movies.csv")
+    item_dict= get_item_info(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\movies.csv")
     print(len(item_dict))
     print(item_dict['1'])
     print(item_dict['11'])
 
-    score_dict = get_ave_score("D:\\WorkSpace\\python\\tensorflow_hello\\recommender\\data\\ml-latest-small\\ratings.csv")
+    score_dict = get_ave_score(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
     print(len(score_dict))
     print(score_dict['31'])
 
-    train_data = get_train_data("D:\\WorkSpace\\python\\tensorflow_hello\\recommender\\data\\ml-latest-small\\ratings.csv")
+    train_data = get_train_data(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
     print(len(train_data))
     print(train_data[:20])
