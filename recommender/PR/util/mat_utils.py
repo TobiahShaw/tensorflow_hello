@@ -32,3 +32,26 @@ def graph_to_m(graph):
 
     m = coo_matrix((data, (row, col)), shape=(total_len, total_len))
     return m, vertex, address_dict
+
+def mat_all_point(m_mat, vertex, alpha):
+    """
+    get E-alpha*m_mat.T
+        m_mat: m matrix
+        vertex: all point
+        alpha: the prob of walk
+    return:
+        a sparse matrix
+    """
+    total_len = len(vertex)
+    row = []
+    col = []
+    data = []
+    for index in range(total_len):
+        row.append(index)
+        col.append(index)
+        data.append(1)
+    row = np.array(row)
+    col = np.array(col)
+    data = np.array(data)
+    eye_t = coo_matrix((data, (row, col)), shape=(total_len, total_len))
+    return eye_t.tocsr() - alpha * m_mat.tocsr().transpose()
