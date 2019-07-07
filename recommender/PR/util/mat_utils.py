@@ -1,5 +1,9 @@
 from scipy.sparse import coo_matrix
 import numpy as np
+import sys, os
+lib_path = os.path.dirname(__file__)
+sys.path.append(lib_path)
+import read as read
 
 def graph_to_m(graph):
     """
@@ -9,7 +13,7 @@ def graph_to_m(graph):
         a list all point
         a dict point - index
     """
-    vertex = graph.keys()
+    vertex = list(graph.keys())
     total_len = len(vertex)
     address_dict = {}
     for index in range(len(vertex)):
@@ -55,3 +59,11 @@ def mat_all_point(m_mat, vertex, alpha):
     data = np.array(data)
     eye_t = coo_matrix((data, (row, col)), shape=(total_len, total_len))
     return eye_t.tocsr() - alpha * m_mat.tocsr().transpose()
+
+
+if __name__ == "__main__":
+    graph = read.get_graph_from_data(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\log.txt")
+    m, vertex, address_dict = graph_to_m(graph)
+    # print(address_dict)
+    # print(m.toarray())
+    print(mat_all_point(m, vertex, 0.8))
