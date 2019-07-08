@@ -3,6 +3,9 @@ import sys, os
 lib_path = os.path.dirname(os.path.dirname(__file__))
 sys.path.append(lib_path)
 import util.read as read
+import util.mat_utils as mat_utils
+from scipy.sparse.linalg import gmres
+import numpy as np
 
 
 def personal_rank(graph, root, alpha, iter_num, recom_num = 10):
@@ -44,6 +47,41 @@ def personal_rank(graph, root, alpha, iter_num, recom_num = 10):
         if right_num > recom_num:
             break
     return  recom_result
+
+def personal_rank_mat(graph, root, alpha, recom_num = 10):
+    """
+    Args:
+        graph: user-item graph
+        root: user who we want to recommender
+        alpha: prob to walk
+        recom_num: number of recommender item
+    Return:
+        a dict key itemid, value pr value
+    """
+    m, vertex, address_dict = mat_utils.graph_to_m(graph)
+    if root not in address_dict:
+        return {}
+    score_dict = {}
+    recom_result={}
+    mat_all = mat_utils.mat_all_point(m, vertex, alpha)
+    index = address_dict[root]
+    initial_list = [[0] for index in range(len(vertex))]
+    initial_list[index] = [1]
+    r_zero = np.array(initial_list)
+    res = gmres(mat_all, r_zero, tol=1e-8)
+    for index in range(len(res)):
+        point = vertex[index]
+        if len(point.strip().split("_"))  < 2:
+            continue
+        if point in graph[root]:
+            continue
+        score_dict[point] = round(res[index], 3)
+    for comb in sorted(score_dict.items(), key=operator.itemgetter(1), reverse=True)[:recom_num]:
+        point, pr = comb[0], comb[1]
+        recom_result[point] = pr
+
+    return recom_result
+
 
 def get_user_recom():
     # user = "A"
