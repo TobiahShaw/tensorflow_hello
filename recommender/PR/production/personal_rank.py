@@ -65,10 +65,10 @@ def personal_rank_mat(graph, root, alpha, recom_num = 10):
     recom_result={}
     mat_all = mat_utils.mat_all_point(m, vertex, alpha)
     index = address_dict[root]
-    initial_list = [[0] for index in range(len(vertex))]
+    initial_list = [[0] for row in range(len(vertex))]
     initial_list[index] = [1]
     r_zero = np.array(initial_list)
-    res = gmres(mat_all, r_zero, tol=1e-8)
+    res = gmres(mat_all, r_zero, tol=1e-8)[0]
     for index in range(len(res)):
         point = vertex[index]
         if len(point.strip().split("_"))  < 2:
@@ -91,19 +91,31 @@ def get_user_recom():
     user = "1"
     alpha = 0.8
     graph = read.get_graph_from_data(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
-    recom_result = personal_rank(graph, user, alpha, 100, 10)
-    item_info = read.get_item_info(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\movies.csv")
+    recom_result = personal_rank(graph, user, alpha, 100, 100)
+    # item_info = read.get_item_info(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\movies.csv")
 
-    for itemid, value in graph[user].items():
-        print(item_info[itemid.split("_")[1]])
+    # for itemid, value in graph[user].items():
+    #     print(item_info[itemid.split("_")[1]])
 
-    print("-"*30)
+    # print("-"*30)
 
-    for itemid, value in recom_result.items():
-        print(item_info[itemid.split("_")[1]])
-        print(value)
+    # for itemid, value in recom_result.items():
+    #     print(item_info[itemid.split("_")[1]])
+    #     print(value)
+    return recom_result
 
-
+def get_user_recom_mat():
+    user = "1"
+    alpha = 0.8
+    graph = read.get_graph_from_data(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
+    recom_result = personal_rank_mat(graph, user, alpha, 100)
+    return recom_result
 
 if __name__ == "__main__":
-    get_user_recom()
+    recom_result = get_user_recom()
+    recom_result_mat = get_user_recom_mat()
+    num = 0
+    for ele in recom_result:
+        if ele in recom_result_mat:
+            num += 1
+    print(num)
