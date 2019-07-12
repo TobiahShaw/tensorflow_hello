@@ -17,3 +17,5 @@ tensorflow 学习部分
 3-基于图的个性化召回算法
 
 4-基于深度学习的个性化召回算法item2vec
+
+5-基于内容的推荐方法content based
