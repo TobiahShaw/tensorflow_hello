@@ -73,8 +73,8 @@ def get_item_category(ave_score, input_file):
         for fix_cate in cate_list:
             item_cate[itemid][fix_cate] = ratio
     fp.close()
-    for tmp_item_id in cate_list:
-        for cate in cate_list[tmp_item_id]:
+    for tmp_item_id in item_cate:
+        for cate in item_cate[tmp_item_id]:
             if cate not in record:
                 record[cate] = {}
             item_ave_score = ave_score.get(tmp_item_id, 0)
@@ -86,3 +86,14 @@ def get_item_category(ave_score, input_file):
             cate_item_scort[cate].append(comb[0])
     return item_cate, cate_item_scort
 
+if __name__ == "__main__":
+    score_dict = get_ave_score(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
+    print(len(score_dict))
+    print(score_dict['31'])
+
+    print("-" * 20)
+    item_cate, cate_item_scort = get_item_category(score_dict, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\movies.csv")
+    print(item_cate["1"])
+
+    print("-" * 20)
+    print(cate_item_scort["Children"])
