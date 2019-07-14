@@ -53,4 +53,24 @@ def get_time_score(timestep):
     delta = (timestep - fix_time_stamp) / total_sec
     return round(1 / (1 + delta), 3)
 
-
+def recom(cate_item_sort, up, userid, topK = 10):
+    """
+    Args:
+        cate_item_sort: cate item reversed sort
+        up: user profile
+        userid: user's id
+        topK: recom num
+    """
+    if userid not in up:
+        return{}
+    recom_result = {}
+    if userid not in recom_result:
+        recom_result[userid] = []
+    for comb in up[userid]:
+        category, ratio = comb
+        num = int(topK * ratio) + 1
+        if category not in cate_item_sort:
+            continue
+        recom_list =  cate_item_sort[category] [:num]
+        recom_result[userid] += recom_list
+    return recom_result
