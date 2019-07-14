@@ -1,5 +1,9 @@
 import os
 import operator
+import sys, os
+lib_path = os.path.dirname(os.path.dirname(__file__))
+sys.path.append(lib_path)
+import util.read as read
 
 def get_up(item_cate, input_file):
     """
@@ -45,11 +49,11 @@ def get_up(item_cate, input_file):
             up[userid].append((comb[0], comb[1]))
             total_score += comb[1]
         for index in range(len(up[userid])):
-            up[userid][index][1] = round(up[userid][index][1]/ total_score, 3)
+            up[userid][index] = (up[userid][index][0], round(up[userid][index][1]/ total_score, 3))
     return up
 def get_time_score(timestep):
     fix_time_stamp = 800000000
-    total_sec = 24*60*60
+    total_sec = 24*60*60*1000
     delta = (timestep - fix_time_stamp) / total_sec
     return round(1 / (1 + delta), 3)
 
@@ -74,3 +78,10 @@ def recom(cate_item_sort, up, userid, topK = 10):
         recom_list =  cate_item_sort[category] [:num]
         recom_result[userid] += recom_list
     return recom_result
+
+if __name__ == "__main__":
+    score_dict = read.get_ave_score(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
+    item_cate, cate_item_scort = read.get_item_category(score_dict, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\movies.csv")
+    userProfile = get_up(item_cate, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
+    print(len(userProfile))
+    print(userProfile["1"])
