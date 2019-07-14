@@ -85,3 +85,6 @@ if __name__ == "__main__":
     userProfile = get_up(item_cate, os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(__file__)))) + "\\recommender\\data\\ml-latest-small\\ratings.csv")
     print(len(userProfile))
     print(userProfile["1"])
+
+    recom_resilt = recom(cate_item_scort, userProfile, "1")
+    print(recom_resilt)
