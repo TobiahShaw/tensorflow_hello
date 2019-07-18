@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 import os
 import operator
+from io import StringIO
+import re
 
 def get_input(input_train_file, input_test_file):
     """
@@ -66,6 +68,22 @@ def process_dis_featrue(feature_str, train_data_df, test_data_df):
 
     return feature_dict
 
+def handle_data_file(old_file):
+    fopen=open(old_file,'r', encoding='UTF-8')
+
+    w_str=""
+    for line in fopen:
+        if re.search(r', ',line):
+            line=re.sub(r', ',r',',line)
+            w_str+=line
+        else:
+            w_str+=line
+    wopen=open(old_file,'w', encoding='UTF-8')
+    wopen.write(w_str)
+    fopen.close()
+    wopen.close()
+
+
 def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_file):
     """
     Args:
@@ -83,4 +101,5 @@ def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_f
 
 if __name__ == "__main__":
     parent_path = os.path.dirname(os.path.dirname(__file__))
+    # handle_data_file(parent_path + r'\data\adult.test')
     ana_train_data(parent_path + r'\data\adult.data', parent_path + r'\data\adult.test', parent_path + r'\data\train.csv', parent_path + r'\data\test.csv')
