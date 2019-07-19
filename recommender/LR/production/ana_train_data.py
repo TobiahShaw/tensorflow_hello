@@ -4,6 +4,7 @@ import os
 import operator
 from io import StringIO
 import re
+import sys
 
 def get_input(input_train_file, input_test_file):
     """
@@ -63,10 +64,40 @@ def process_dis_featrue(feature_str, train_data_df, test_data_df):
     train_data_df.loc[:, feature_str] = train_data_df.loc[:, feature_str].apply(dis_to_feature, args=(feature_dict,))
     test_data_df.loc[:, feature_str] = test_data_df.loc[:, feature_str].apply(dis_to_feature, args=(feature_dict,))
 
-    print(train_data_df.loc[:3, :])
-    print(feature_dict)
-
     return feature_dict
+
+def list_trans(dict_in):
+    output_list = [0] * 5
+    key_list = ["min", "25%", "50%", "75%", "max"]
+    for index in range(len(key_list)):
+        fix_key = key_list[index]
+        if fix_key not in dict_in:
+            print("error")
+            sys.exit()
+        else:
+            output_list[index] = dict_in[fix_key]
+    return output_list
+
+def con_to_feature(x, feature_list):
+    feature_len = len(feature_list) - 1
+    result = [0] * feature_len
+    for index in range(feature_len):
+        if int(x) >= feature_list[index] and int(x) <= feature_list[index + 1]:
+            result[index] = 1
+            break
+    return ",".join([str(ele) for ele in result])
+
+def process_con_featrue(feature_str, train_data_df, test_data_df):
+    origin_dict = train_data_df.loc[:, feature_str].describe().to_dict()
+    # {'count': 30162.0, 'mean': 38.437901995888865, 'std': 13.134664776855985, 'min': 17.0, '25%': 28.0, '50%': 37.0, '75%': 47.0, 'max': 90.0}
+    feature_list = list_trans(origin_dict)
+    train_data_df.loc[:, feature_str] = train_data_df.loc[:, feature_str].apply(con_to_feature, args=(feature_list,))
+    test_data_df.loc[:, feature_str] = test_data_df.loc[:, feature_str].apply(con_to_feature, args=(feature_list,))
+
+    print(train_data_df.loc[:3, :])
+    print(feature_list)
+
+    return feature_list
 
 def handle_data_file(old_file):
     fopen=open(old_file,'r', encoding='UTF-8')
@@ -83,7 +114,6 @@ def handle_data_file(old_file):
     fopen.close()
     wopen.close()
 
-
 def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_file):
     """
     Args:
@@ -97,7 +127,10 @@ def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_f
     process_label_feature(label_str, train_data_df)
     process_label_feature(label_str, test_data_df)
     # 离散化
+    dis_feature_list=["workclass", "education", "marital-status", "occupation", "relationship", "race", "sex", "native-country"]
     process_dis_featrue("workclass", train_data_df, test_data_df)
+    # 处理连续特征
+    process_con_featrue("age", train_data_df, test_data_df)
 
 if __name__ == "__main__":
     parent_path = os.path.dirname(os.path.dirname(__file__))
