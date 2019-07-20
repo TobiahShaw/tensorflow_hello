@@ -94,9 +94,6 @@ def process_con_featrue(feature_str, train_data_df, test_data_df):
     train_data_df.loc[:, feature_str] = train_data_df.loc[:, feature_str].apply(con_to_feature, args=(feature_list,))
     test_data_df.loc[:, feature_str] = test_data_df.loc[:, feature_str].apply(con_to_feature, args=(feature_list,))
 
-    print(train_data_df.loc[:3, :])
-    print(feature_list)
-
     return feature_list
 
 def handle_data_file(old_file):
@@ -104,6 +101,7 @@ def handle_data_file(old_file):
 
     w_str=""
     for line in fopen:
+        line=line.replace(".", "")
         if re.search(r', ',line):
             line=re.sub(r', ',r',',line)
             w_str+=line
@@ -113,6 +111,13 @@ def handle_data_file(old_file):
     wopen.write(w_str)
     fopen.close()
     wopen.close()
+
+def output_file(data_frame, outputfile):
+    fw = open(outputfile, "w+", encoding='UTF-8')
+    for raw_index in data_frame.index:
+        outline = ",".join([str(ele) for ele in data_frame.loc[raw_index].values])
+        fw.write(outline + "\n")
+    fw.close()
 
 def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_file):
     """
@@ -128,11 +133,17 @@ def ana_train_data(input_train_file, input_test_file, out_train_file, out_test_f
     process_label_feature(label_str, test_data_df)
     # 离散化
     dis_feature_list=["workclass", "education", "marital-status", "occupation", "relationship", "race", "sex", "native-country"]
-    process_dis_featrue("workclass", train_data_df, test_data_df)
+    for dis_feature in dis_feature_list:
+        process_dis_featrue(dis_feature, train_data_df, test_data_df)
     # 处理连续特征
-    process_con_featrue("age", train_data_df, test_data_df)
+    con_feature_list=["age", "education-num", "capital-gain", "capital-loss", "hours-per-week"]
+    for con_feature in con_feature_list:
+        process_con_featrue(con_feature, train_data_df, test_data_df)
+
+    output_file(train_data_df, out_train_file)
+    output_file(test_data_df, out_test_file)
 
 if __name__ == "__main__":
     parent_path = os.path.dirname(os.path.dirname(__file__))
     # handle_data_file(parent_path + r'\data\adult.test')
-    ana_train_data(parent_path + r'\data\adult.data', parent_path + r'\data\adult.test', parent_path + r'\data\train.csv', parent_path + r'\data\test.csv')
+    ana_train_data(parent_path + r'\data\adult.data', parent_path + r'\data\adult.test', parent_path + r'\data\train.txt', parent_path + r'\data\test.txt')
