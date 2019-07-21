@@ -1,6 +1,7 @@
 import numpy as np
 import os
 from sklearn.linear_model import LogisticRegressionCV as LRCV
+from sklearn.externals import joblib
 
 
 def train_lr_model(train_file, model_coef, model_file):
@@ -30,9 +31,10 @@ def train_lr_model(train_file, model_coef, model_file):
     fw.write(",".join([str(ele) for ele in lr_cf.coef_[0]]))
     fw.close()
 
+    joblib.dump(lr_cf, model_file)
 
 
 if __name__ == "__main__":
     # recommender\LR\data\train.txt
     parent_path = os.path.dirname(os.path.dirname(__file__))
-    train_lr_model(parent_path + r"\data\train.txt", parent_path + r"\data\model_coef.txt", parent_path + r"\data\model_file")
+    train_lr_model(parent_path + r"\data\train.txt", parent_path + r"\data\model_coef.txt", parent_path + r"\data\lr_model_file")
