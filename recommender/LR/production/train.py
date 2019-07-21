@@ -16,18 +16,23 @@ def train_lr_model(train_file, model_coef, model_file):
     feature_list = range(total_feature)
     train_feature = np.genfromtxt(train_file, dtype=np.int32, delimiter=",",usecols=feature_list)
 
-    lr_cf = LRCV(Cs=[1, 10, 100], penalty="l2", tol=0.0001, max_iter=500, cv=5).fit(train_feature, train_label)
+    lr_cf = LRCV(Cs=[1], penalty="l2", tol=0.0001, max_iter=500, cv=5).fit(train_feature, train_label)
     scores = list(lr_cf.scores_.values())[0]
     print("diff:%s"%(",".join([str(ele) for ele in scores.mean(axis=0)])))
     print("Accuracy:%s (+-%0.2f)"%(scores.mean(), scores.std()*2))
 
-    lr_cf = LRCV(Cs=[1, 10, 100], penalty="l2", tol=0.0001, max_iter=500, cv=5, scoring="roc_auc").fit(train_feature, train_label)
+    lr_cf = LRCV(Cs=[1], penalty="l2", tol=0.0001, max_iter=500, cv=5, scoring="roc_auc").fit(train_feature, train_label)
     scores = list(lr_cf.scores_.values())[0]
     print("diff:%s"%(",".join([str(ele) for ele in scores.mean(axis=0)])))
     print("AUC:%s (+-%0.2f)"%(scores.mean(), scores.std()*2))
+
+    fw = open(model_coef, "w+", encoding="utf-8")
+    fw.write(",".join([str(ele) for ele in lr_cf.coef_[0]]))
+    fw.close()
+
 
 
 if __name__ == "__main__":
     # recommender\LR\data\train.txt
     parent_path = os.path.dirname(os.path.dirname(__file__))
-    train_lr_model(parent_path + r"\data\train.txt", "", "")
+    train_lr_model(parent_path + r"\data\train.txt", parent_path + r"\data\model_coef.txt", parent_path + r"\data\model_file")
